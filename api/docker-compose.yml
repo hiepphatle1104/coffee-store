@@ -1,0 +1,6 @@
+services:
+  mongo_bp:
+    image: mongo:latest
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT}:27017"

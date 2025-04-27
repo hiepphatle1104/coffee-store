@@ -1,0 +1,42 @@
+@import 'tailwindcss';
+
+* {
+  box-sizing: border-box;
+  @apply select-none;
+}
+
+.button {
+  @apply select-none cursor-pointer;
+
+  @apply inline-block rounded-sm border text-center;
+
+  @apply bg-slate-700 hover:bg-transparent hover:text-slate-700 px-12 py-2 text-sm;
+
+  @apply font-medium text-white focus:ring-0 focus:outline-hidden;
+
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.select {
+  @apply px-5;
+}
+
+.navbar-item-active {
+  @apply bg-slate-800! text-white!;
+
+  span {
+    @apply bg-slate-600!;
+  }
+}
+
+.navbar-item {
+  @apply flex items-center gap-2 cursor-pointer;
+
+  @apply bg-white shadow-sm px-4 py-1 rounded-lg border border-neutral-200/50;
+
+  @apply hover:bg-slate-800 hover:text-white!;
+
+  span {
+    @apply group-hover:bg-slate-600 px-1 text-xs rounded bg-slate-200/80;
+  }
+}
