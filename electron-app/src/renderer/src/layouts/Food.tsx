@@ -6,7 +6,7 @@ export const Food = () => {
   const { tagsFilter } = useItemContext()
   const items = tagsFilter('food')
 
-  if (!items) return <Notfound />
+  if (!items || items.length === 0) return <Notfound />
 
   return (
     <Content>

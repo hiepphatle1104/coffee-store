@@ -6,7 +6,8 @@ import { Outlet } from 'react-router'
 export const Admin = () => {
   const navbarLinks = [
     { title: 'Orders', path: '/admin/orders' },
-    { title: 'Items', path: '/admin/items' }
+    { title: 'Items', path: '/admin/items' },
+    { title: 'Payments', path: '/admin/payments' }
   ]
 
   return (

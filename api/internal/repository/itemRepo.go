@@ -17,7 +17,7 @@ type ItemRepo struct {
 func NewItemRepo(db *database.Database) *ItemRepo {
 	return &ItemRepo{
 		db:         db.Client,
-		collection: db.DB.Collection("users"),
+		collection: db.DB.Collection("items"),
 	}
 }
 

@@ -45,9 +45,18 @@ func main() {
 	orderService := service.NewOrderService(orderRepo, itemRepo)
 	orderHandler := handler.NewOrderHandler(orderService, manager)
 
+	transactionRepo := repository.NewTransactionRepo(database)
+	transactionService := service.NewTransactionService(transactionRepo)
+	transactionHandler := handler.NewTransactionHandler(transactionService, manager)
+
 	r.Route("/v1", func(r chi.Router) {
 		r.Route("/orders", func(r chi.Router) {
 			r.Post("/", orderHandler.NewOrder)
+			r.Route("/{orderID}", func(r chi.Router) {
+				r.Use(OrderCtx)
+				r.Put("/update", orderHandler.UpdateOrderStatus)
+				r.Delete("/", orderHandler.DeleteOrder)
+			})
 			r.Get("/", orderHandler.GetOrders)
 		})
 
@@ -56,9 +65,21 @@ func main() {
 			r.Get("/", itemHandler.GetItems)
 		})
 
+		r.Post("/payments", transactionHandler.NewTransaction)
+		r.Get("/payments", transactionHandler.GetTransactions)
+
 		r.Get("/ws", manager.HandleConnection)
 	})
 
 	fmt.Println("Server đang chạy ở port 8080")
 	http.ListenAndServe(":8080", r)
+}
+
+func OrderCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		orderID := chi.URLParam(r, "orderID")
+
+		ctx := context.WithValue(r.Context(), "orderID", orderID)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

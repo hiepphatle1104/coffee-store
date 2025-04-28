@@ -3,7 +3,8 @@ import { useItemContext } from '@/hooks/ItemContext'
 import { ItemModel } from 'src/shared/model'
 export const All = () => {
   const { items } = useItemContext()
-  if (!items) return <Notfound />
+
+  if (!items || items.length === 0) return <Notfound />
 
   return (
     <Content>

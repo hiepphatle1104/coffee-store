@@ -4,6 +4,9 @@ import { useState } from 'react'
 import { LuTrash2 } from 'react-icons/lu'
 import { CartItemModel } from 'src/shared/model'
 import { Modal } from './Modal'
+import { IData, usePaymentContext } from '@/hooks/PaymentContext'
+import toast from 'react-hot-toast'
+import clsx from 'clsx'
 
 export const CartItem = ({ item }: { item: CartItemModel }) => {
   const { removeFromCart } = useItemContext()
@@ -40,39 +43,11 @@ export const CartItem = ({ item }: { item: CartItemModel }) => {
 }
 
 export const Summary = () => {
-  // TODO: Implement payment here
-  // TODO: Implement table information here
-
   const { cart, totalPrice, clearCart } = useItemContext()
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const openModal = () => setIsModalOpen(true)
-  const closeModal = () => setIsModalOpen(false)
+  const { processPayment, isProcessing } = usePaymentContext()
 
-  const remainingTable = [
-    {
-      id: 'a-01',
-      name: 'A-01'
-    },
-    {
-      id: 'a-02',
-      name: 'A-02'
-    },
-    {
-      id: 'a-03',
-      name: 'A-03'
-    },
-    {
-      id: 'a-04',
-      name: 'A-04'
-    },
-    {
-      id: 'a-05',
-      name: 'A-05'
-    }
-  ]
-
-  const [table, setTable] = useState<string>(remainingTable[0].id)
+  const [method, setMethod] = useState<string>('cash')
 
   const handleClearCart = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
@@ -80,22 +55,23 @@ export const Summary = () => {
   }
   const handlePayment = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-    openModal()
+    const toastOpts = { id: 'payment' }
+    toast.loading('Creating payment...', toastOpts)
 
     try {
-      // Simulate payment processing delay
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      if (cart.length === 0) throw new Error('Cart is empty!')
 
-      // Uncomment and use the actual API call if needed
-      // const response = await fetch('http://localhost:8080/v1/payment')
-      // Handle response here if necessary
+      const orderData: IData = {
+        method,
+        data: cart
+      }
 
-      setIsModalOpen(false)
-      alert('Payment successful!')
+      await processPayment(orderData).then(() => toast.success('Payment Completed', toastOpts))
     } catch (error) {
-      console.error('Payment failed:', error)
-      setIsModalOpen(false)
-      alert('Payment failed. Please try again.')
+      toast.error((error as Error).message, toastOpts)
+    } finally {
+      clearCart()
+      setMethod('cash')
     }
   }
 
@@ -126,20 +102,17 @@ export const Summary = () => {
           <div className="bg-white px-3 py-1.5 rounded-lg space-y-1 border-neutral-200/50 border shadow-sm">
             {/* Table */}
             <section className="flex w-full justify-between h-8 items-center">
-              <label htmlFor="table-select" className="font-medium">
-                Select Table
+              <label htmlFor="method-select" className="font-medium">
+                Select Method
               </label>
               <Select
-                id="table-select"
-                name="table-select"
-                onChange={(e) => setTable(e.target.value)}
-                value={table}
+                id="method-select"
+                name="method-select"
+                onChange={(e) => setMethod(e.target.value)}
+                value={method}
               >
-                {remainingTable.map((table) => (
-                  <option key={table.id} value={table.id}>
-                    {table.name}
-                  </option>
-                ))}
+                <option value={'cash'}>Cash</option>
+                <option value={'card'}>Card</option>
               </Select>
             </section>
 
@@ -154,12 +127,11 @@ export const Summary = () => {
           </div>
 
           {/* Confirm button */}
-          <Button type="submit" className="w-full" onClick={handlePayment}>
-            Confirm
+          <Button type="submit" className="w-full" onClick={handlePayment} disabled={isProcessing}>
+            {isProcessing ? 'Processing...' : 'Confirm Payment'}
           </Button>
         </section>
       </Sidebar>
-      <Modal isOpen={isModalOpen} />
     </>
   )
 }

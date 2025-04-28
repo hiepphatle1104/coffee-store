@@ -25,6 +25,7 @@ var (
 	collections = []string{
 		"orders",
 		"items",
+		"transactions",
 	}
 )
 

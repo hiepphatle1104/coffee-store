@@ -4,6 +4,7 @@ import (
 	"api/internal/database"
 	"api/internal/model"
 	"context"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -59,10 +60,17 @@ func (r *OrderRepo) FindOrders(ctx context.Context) (*[]model.Order, error) {
 	return &orders, nil
 }
 
-func (r *OrderRepo) UpdateOrder(ctx context.Context, orderId string, order *model.Order) error {
-	_, err := r.collection.UpdateByID(ctx, orderId, &order)
+func (r *OrderRepo) UpdateOrder(ctx context.Context, orderId string, updateFields bson.M) error {
+	update := bson.M{
+		"$set": updateFields,
+	}
+	result, err := r.collection.UpdateByID(ctx, orderId, update)
 	if err != nil {
 		return err
+	}
+
+	if result.MatchedCount == 0 {
+		return fmt.Errorf("khong tim thay order")
 	}
 
 	return err

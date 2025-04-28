@@ -25,9 +25,7 @@ export const OrderProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     window.context.autoUpdater((data: UpdaterModel) => {
-      console.log('Auto updater data:', data)
-
-      if (data.event === 'update' && data.category === 'database') fetchOrders()
+      if (data.event === 'update' && data.category === 'orders') fetchOrders()
     })
 
     return () => {}

@@ -74,6 +74,8 @@ export const ItemProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Function to filter items by category
   const tagsFilter = (tags: string) => {
+    if (!items) return []
+
     return items.filter((item) => item.tags.includes(tags))
   }
 
@@ -89,9 +91,7 @@ export const ItemProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     window.context.autoUpdater((data: UpdaterModel) => {
-      console.log('Auto updater data:', data)
-
-      if (data.event === 'update' && data.category === 'database') fetchItems()
+      if (data.event === 'update' && data.category === 'items') fetchItems()
     })
 
     return () => {}

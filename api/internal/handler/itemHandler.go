@@ -38,7 +38,7 @@ func (h *ItemHandler) NewItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	broadcast := dto.NewBroadCast("update", "database")
+	broadcast := dto.NewBroadCast("update", "items")
 	h.manager.Broadcast <- broadcast
 
 	res := dto.NewResponse("món mới đã được thêm thành công", http.StatusCreated)

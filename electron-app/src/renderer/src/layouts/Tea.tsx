@@ -1,4 +1,4 @@
-import { Card, Content } from '@/components'
+import { Card, Content, Notfound } from '@/components'
 import { useItemContext } from '@/hooks/ItemContext'
 import { ItemModel } from 'src/shared/model'
 
@@ -6,7 +6,7 @@ export const Tea = () => {
   const { tagsFilter } = useItemContext()
   const items = tagsFilter('tea')
 
-  if (!items) return null
+  if (!items || items.length === 0) return <Notfound />
 
   return (
     <Content>

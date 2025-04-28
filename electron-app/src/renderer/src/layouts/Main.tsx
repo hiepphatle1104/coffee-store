@@ -2,10 +2,10 @@ import { Navbar, Summary } from '@/components'
 import { useItemContext } from '@/hooks/ItemContext'
 import { ItemProvider } from '@/hooks/ItemProvider'
 import { OrderProvider } from '@/hooks/OrderProvider'
+import { PaymentProvider } from '@/hooks/PaymentProvider'
 import { Outlet } from 'react-router'
 
 export const Main = () => {
-  const { tagsFilter } = useItemContext()
   const navbarLinks = [
     {
       title: 'All',
@@ -39,7 +39,9 @@ export const Main = () => {
           </div>
 
           <div>
-            <Summary />
+            <PaymentProvider>
+              <Summary />
+            </PaymentProvider>
           </div>
         </div>
       </ItemProvider>
