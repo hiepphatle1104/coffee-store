@@ -32,6 +32,32 @@ export const ItemProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }
 
+  // Function to delete item from backend
+  const deleteItem = async (item: ItemModel) => {
+    setLoading(true)
+    try {
+      const response = await fetch(`http://localhost:8080/v1/items/${item.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      if (!response.ok) {
+        toast.error('Failed to delete item')
+        return
+      }
+      const data = await response.json()
+      if (data.ok) {
+        toast.success('Item deleted successfully')
+        fetchItems()
+      }
+    } catch (error) {
+      toast.error('Failed to delete item')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Function to add an item to the cart
   const addToCart = (item: ItemModel) => {
     setCart((prev) => {
@@ -106,7 +132,8 @@ export const ItemProvider = ({ children }: { children: React.ReactNode }) => {
     removeFromCart,
     clearCart,
     tagsFilter,
-    addItem
+    addItem,
+    deleteItem
   }
 
   return <ItemContext.Provider value={value}>{children}</ItemContext.Provider>

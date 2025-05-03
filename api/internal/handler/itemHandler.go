@@ -59,3 +59,23 @@ func (h *ItemHandler) GetItems(w http.ResponseWriter, r *http.Request) {
 	res.Send(w)
 	return
 }
+
+func (h *ItemHandler) DeleteItem(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	itemID, ok := ctx.Value("itemID").(string)
+	if !ok {
+		res := dto.NewResponse("lỗi dữ liệu", http.StatusBadRequest)
+		res.Send(w)
+		return
+	}
+
+	err := h.service.DeleteItem(itemID)
+	if err != nil {
+		res := dto.NewResponse(err.Error(), http.StatusInternalServerError)
+		res.Send(w)
+		return
+	}
+
+	res := dto.NewResponse("Ok", http.StatusOK)
+	res.Send(w)
+}

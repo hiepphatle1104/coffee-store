@@ -53,3 +53,13 @@ func (s *ItemService) GetItems() (*[]model.Item, error) {
 
 	return items, err
 }
+
+func (s *ItemService) DeleteItem(itemID string) error {
+	ctx := context.Background()
+	err := s.repo.DeleteItem(ctx, itemID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

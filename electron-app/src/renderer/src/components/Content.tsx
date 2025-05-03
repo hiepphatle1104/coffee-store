@@ -1,5 +1,4 @@
 import { ComponentProps } from 'react'
-import { Card } from './Card'
 
 export const Content = ({ children, ...props }: ComponentProps<'div'>) => {
   return (

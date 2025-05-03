@@ -1,10 +1,34 @@
 import { Button, Text } from '@/components/ui'
 import { useItemContext } from '@/hooks/ItemContext'
+import { useState } from 'react'
 import { Link } from 'react-router'
 import { ItemModel } from 'src/shared/model'
 
+export const DeleteItem = ({ item, onDelete }: { item: ItemModel; onDelete: () => void }) => {
+  const { deleteItem } = useItemContext()
+  return (
+    <section className="w-full flex items-center justify-between border rounded border-neutral-300 px-2 py-1">
+      <Text size="sm" className="font-medium">
+        {item?.name} - {item?.price}
+      </Text>
+      <button
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          deleteItem(item)
+          onDelete()
+        }}
+        className="transition-all duration-200 ease-in-out cursor-pointer bg-neutral-900 hover:bg-neutral-700 text-white px-3 py-1 rounded"
+      >
+        Delete
+      </button>
+    </section>
+  )
+}
+
 export const Items = () => {
-  const { addItem } = useItemContext()
+  const { addItem, items } = useItemContext()
+  const [deleteItems, setDeleteItems] = useState<ItemModel[]>([])
 
   const handleSubmit = async () => {
     const formData = new FormData(document.querySelector('form') as HTMLFormElement)
@@ -24,8 +48,20 @@ export const Items = () => {
     await addItem(itemData)
   }
 
+  const handleFind = () => {
+    const formData = new FormData(document.querySelector('#delete-item-form') as HTMLFormElement)
+    const name = formData.get('delete-item-name') as string
+
+    const item = items.filter(
+      (item: ItemModel) => item.name.toLowerCase() === name.trim().toLowerCase()
+    )
+
+    if (!item || item.length === 0) alert('Item not found')
+    setDeleteItems(item)
+  }
+
   return (
-    <div className="h-full flex items-center justify-center">
+    <div className="h-full flex items-center justify-center gap-10">
       <div className="h-fit w-96 bg-white rounded shadow border border-neutral-200 p-3">
         <Text size="lg" className="font-medium">
           New Item
@@ -97,6 +133,44 @@ export const Items = () => {
             </div>
           </div>
         </form>
+      </div>
+
+      <div className="bg-white w-96 p-3 rounded h-fit">
+        <Text size="lg" className="font-medium">
+          Delete Item
+        </Text>
+
+        <div className="border border-neutral-200" />
+
+        <form action={handleFind} id="delete-item-form">
+          <Text size="sm" className="font-medium">
+            Name
+          </Text>
+
+          <section className="flex gap-2">
+            <input
+              name="delete-item-name"
+              id="delete-item-name"
+              type="text"
+              className="border border-neutral-200 rounded p-2 w-full mt-1"
+              placeholder="Enter item name"
+            />
+
+            <Button type="submit">Find</Button>
+          </section>
+        </form>
+
+        <div className="space-y-2 mt-3">
+          {deleteItems?.map((item: ItemModel) => (
+            <DeleteItem
+              key={item.id}
+              item={item}
+              onDelete={() => {
+                setDeleteItems((prev) => prev.filter((i) => i.id !== item.id))
+              }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )

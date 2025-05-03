@@ -16,7 +16,7 @@ export const Card = ({ item }: { item: ItemModel }) => {
       {/* Image */}
       <div>
         <img
-          src={item.image || 'https://placehold.co/600x400?text=Invalid+Image'}
+          src={item?.image || 'https://placehold.co/600x400?text=Invalid+Image'}
           alt="Placeholder"
           className="w-full h-32 object-cover rounded-md"
         />
@@ -24,8 +24,8 @@ export const Card = ({ item }: { item: ItemModel }) => {
 
       {/* Information */}
       <section className="flex w-full justify-between items-center">
-        <Text isBold>{item.name}</Text>
-        <p>{item.price.toLocaleString('vi-VN')} VND</p>
+        <Text isBold>{item?.name}</Text>
+        <p>{item?.price.toLocaleString('vi-VN')} VND</p>
       </section>
       <div className="flex justify-center">
         {cart.some((cartItem) => cartItem.id === item.id) ? (

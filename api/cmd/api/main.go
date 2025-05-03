@@ -63,6 +63,10 @@ func main() {
 		r.Route("/items", func(r chi.Router) {
 			r.Post("/", itemHandler.NewItem)
 			r.Get("/", itemHandler.GetItems)
+			r.Route("/{itemID}", func(r chi.Router) {
+				r.Use(ItemCtx)
+				r.Delete("/", itemHandler.DeleteItem)
+			})
 		})
 
 		r.Post("/payments", transactionHandler.NewTransaction)
@@ -80,6 +84,15 @@ func OrderCtx(next http.Handler) http.Handler {
 		orderID := chi.URLParam(r, "orderID")
 
 		ctx := context.WithValue(r.Context(), "orderID", orderID)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func ItemCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		itemID := chi.URLParam(r, "itemID")
+
+		ctx := context.WithValue(r.Context(), "itemID", itemID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

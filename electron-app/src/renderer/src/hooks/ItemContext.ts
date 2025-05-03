@@ -11,6 +11,7 @@ export interface ItemContextType {
   clearCart: () => void
   tagsFilter: (tags: string) => ItemModel[]
   addItem: (item: ItemModel) => Promise<void>
+  deleteItem: (item: ItemModel) => Promise<void>
 }
 
 export const ItemContext = createContext<ItemContextType>({} as ItemContextType)
