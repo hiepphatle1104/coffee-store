@@ -31,12 +31,10 @@ func (h *TransactionHandler) NewTransaction(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	broadcast := dto.NewBroadCast("update", "transactions")
-	h.manager.Broadcast <- broadcast
-
 	res := dto.NewResponse("Tao transaction thanh cong", http.StatusCreated)
 	res.Data = newTrans
 	res.Send(w)
+	h.manager.SendMessage("update", "transactions")
 }
 
 func (h *TransactionHandler) GetTransactions(w http.ResponseWriter, r *http.Request) {
@@ -50,5 +48,4 @@ func (h *TransactionHandler) GetTransactions(w http.ResponseWriter, r *http.Requ
 	res := dto.NewResponse("danh sách transaction", http.StatusOK)
 	res.Data = trans
 	res.Send(w)
-	return
 }

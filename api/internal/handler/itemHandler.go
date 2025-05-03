@@ -38,12 +38,9 @@ func (h *ItemHandler) NewItem(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	broadcast := dto.NewBroadCast("update", "items")
-	h.manager.Broadcast <- broadcast
-
 	res := dto.NewResponse("món mới đã được thêm thành công", http.StatusCreated)
 	res.Send(w)
-	return
+	h.manager.SendMessage("update", "items")
 }
 
 func (h *ItemHandler) GetItems(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +54,6 @@ func (h *ItemHandler) GetItems(w http.ResponseWriter, r *http.Request) {
 	res := dto.NewResponse("danh sách các món", http.StatusOK)
 	res.Data = items
 	res.Send(w)
-	return
 }
 
 func (h *ItemHandler) DeleteItem(w http.ResponseWriter, r *http.Request) {
@@ -78,4 +74,5 @@ func (h *ItemHandler) DeleteItem(w http.ResponseWriter, r *http.Request) {
 
 	res := dto.NewResponse("Ok", http.StatusOK)
 	res.Send(w)
+	h.manager.SendMessage("update", "items")
 }

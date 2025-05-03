@@ -86,3 +86,8 @@ func (wsm *WSManager) HandleConnection(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func (wsm *WSManager) SendMessage(event, category string) {
+	broadcast := dto.NewBroadCast(event, category)
+	wsm.Broadcast <- broadcast
+}

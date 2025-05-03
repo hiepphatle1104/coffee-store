@@ -39,12 +39,9 @@ func (h *OrderHandler) UpdateOrderStatus(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	broadcast := dto.NewBroadCast("update", "orders")
-	h.manager.Broadcast <- broadcast
-
 	res := dto.NewResponse("updated", http.StatusOK)
 	res.Send(w)
-	return
+	h.manager.SendMessage("update", "orders")
 }
 
 func (h *OrderHandler) NewOrder(w http.ResponseWriter, r *http.Request) {
@@ -65,13 +62,10 @@ func (h *OrderHandler) NewOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	broadcast := dto.NewBroadCast("update", "orders")
-	h.manager.Broadcast <- broadcast
-
 	res := dto.NewResponse("tạo order thành công", http.StatusCreated)
 	res.Data = result
 	res.Send(w)
-	return
+	h.manager.SendMessage("update", "orders")
 }
 
 func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
@@ -85,7 +79,6 @@ func (h *OrderHandler) GetOrders(w http.ResponseWriter, r *http.Request) {
 	res := dto.NewResponse("danh sách các orders", http.StatusOK)
 	res.Data = orders
 	res.Send(w)
-	return
 }
 
 func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
@@ -106,4 +99,5 @@ func (h *OrderHandler) DeleteOrder(w http.ResponseWriter, r *http.Request) {
 
 	res := dto.NewResponse("Ok", http.StatusOK)
 	res.Send(w)
+	h.manager.SendMessage("update", "orders")
 }
